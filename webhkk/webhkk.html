@@ -172,13 +172,21 @@ window.onload = function(){
         oninput(document.getElementById("Dec"));
     }
     {
+        const textstr_elem = document.getElementById("textstr");
+        const texthex_elem = document.getElementById("texthex");
+        const charcode_elem = document.getElementById("charcode");
         function hextostr(target) {
-            const hex = target.value;
-            const a = hex.match(/[0-9a-fA-F]{2}/g).map((hh) => parseInt(hh, 16));
+            const hexstr = target.value;
+            const hex = hexstr.match(/[0-9a-fA-F]{2}/g);
+            if (!hex) {
+                textstr_elem.value = "";
+                return;
+            }
+            const a = hex.map((hh) => parseInt(hh, 16));
             const u8a = new Uint8Array(a);
             const decoder = new TextDecoder();
             const s = decoder.decode(u8a);
-            document.getElementById("textstr").value = s;
+            textstr_elem.value = s;
         }
         function strtohex(target) {
             const str = target.value;
@@ -188,11 +196,8 @@ window.onload = function(){
             for (let i = 0; i < a.length; i++) {
                 hex.push(a[i].toString(16).padStart(2, "0"));
             }
-            document.getElementById("texthex").value = hex.join(" ");
+            texthex_elem.value = hex.join(" ");
         }
-        const textstr_elem = document.getElementById("textstr");
-        const texthex_elem = document.getElementById("texthex");
-        const charcode_elem = document.getElementById("charcode");
         texthex_elem.oninput = (e) => hextostr(e.target);
         //textstr_elem.oninput = (e) => strtohex(e.target);
         strtohex(textstr_elem);
