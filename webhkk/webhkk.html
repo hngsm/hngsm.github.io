@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../assets/style.css" type="text/css">
+<title>Web henkan-kun</title>
+<style>
+    dl {
+        margin-left: auto;
+        margin-right: auto;
+        width: 19em;
+    }
+    dt {
+        float: left;
+    }
+    input.bk {
+        text-align: right;
+        font-family: monospace;
+    }
+    #charcode {
+        margin-top: 0.6em;
+        text-align: right;
+        font-family: monospace;
+        height: 3.5em;
+    }
+    input {
+        width: 18em;
+    }
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    textarea {
+        display: inline-block;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        width: 24em;
+        height: 20em;
+        font-family: monospace;
+    }
+</style>
+<script>
+window.onload = function(){
+    {
+        const bkelements = document.getElementsByClassName("bk");
+        const bkerror = document.getElementById("bkerror");
+        function umax(bit) {
+            return (1n<<bit) - 1n;
+        }
+        function smax(bit) {
+            return (1n<<(bit-1n)) - 1n;
+        }
+        function smin(bit) {
+            return -(1n<<(bit-1n));
+        }
+        function getval(target) {
+            function checkrange(v, min, max) {
+                if (v >= min && v <= max) {
+                    return v;
+                }
+                throw 'Out of range';
+            }
+            let v;
+            switch (target.id) {
+                case "Dec":
+                    v = checkrange(BigInt(target.value), 0n, umax(64n));
+                    break;
+                case "Hex":
+                    v = checkrange(BigInt("0x"+target.value), 0n, umax(64n));
+                    break;
+                case "Bin":
+                    v = checkrange(BigInt("0b"+target.value), 0n, umax(64n));
+                    break;
+                case "u8":
+                    v = checkrange(BigInt(target.value), 0n, umax(8n));
+                    break;
+                case "s8":
+                    v = checkrange(BigInt(target.value), smin(8n), smax(8n));
+                    break;
+                case "u16":
+                    v = checkrange(BigInt(target.value), 0n, umax(16n));
+                    break;
+                case "s16":
+                    v = checkrange(BigInt(target.value), smin(16n), smax(16n));
+                    break;
+                case "u32":
+                    v = checkrange(BigInt(target.value), 0n, umax(32n));
+                    break;
+                case "s32":
+                    v = checkrange(BigInt(target.value), smin(32n), smax(32n));
+                    break;
+                case "u64":
+                    v = checkrange(BigInt(target.value), 0n, umax(64n));
+                    break;
+                case "s64":
+                    v = checkrange(BigInt(target.value), smin(64n), smax(64n));
+                    break;
+                default:
+                    throw 'Invalid target ID';
+            }
+            if (v < 0) {
+                v = (1n<<64n) + v;
+            }
+            return v;
+        }
+        function propagate(v) {
+            function signed(v, bit) {
+                const mask = (1n<<bit) - 1n;
+                const msb = v & (1n<<(bit - 1n));
+                const sub = 1n<<bit;
+                let t = v & mask;
+                if (t & msb) {
+                    t = t - sub;
+                }
+                return t;
+            }
+            for (const target of bkelements) {
+                switch (target.id) {
+                    case "Dec":
+                        target.value = v.toString(10);
+                        break;
+                    case "Hex":
+                        target.value = v.toString(16);
+                        break;
+                    case "Bin":
+                        target.value = v.toString(2);
+                        break;
+                    case "u8":
+                        target.value = (v & umax(8n)).toString(10);
+                        break;
+                    case "s8":
+                        target.value = signed(v, 8n).toString(10);
+                        break;
+                    case "u16":
+                        target.value = (v & umax(16n)).toString(10);
+                        break;
+                    case "s16":
+                        target.value = signed(v, 16n).toString(10);
+                        break;
+                    case "u32":
+                        target.value = (v & umax(32n)).toString(10);
+                        break;
+                    case "s32":
+                        target.value = signed(v, 32n).toString(10);
+                        break;
+                    case "u64":
+                        target.value = (v & umax(64n)).toString(10);
+                        break;
+                    case "s64":
+                        target.value = signed(v, 64n).toString(10);
+                        break;
+                    default:
+                        throw 'Invalid target ID';
+                }
+            }
+        }
+        function oninput(target) {
+            try {
+                const v = getval(target);
+                //console.log(v);
+                propagate(v);
+                bkerror.innerText = "";
+            } catch (e) {
+                console.log(e);
+                //bkerror.innerText = e;
+            }
+        }
+        for (const elem of bkelements) {
+            elem.oninput = (e) => oninput(e.target);
+        }
+        oninput(document.getElementById("Dec"));
+    }
+    {
+        function hextostr(target) {
+            const hex = target.value;
+            const a = hex.match(/[0-9a-fA-F]{2}/g).map((hh) => parseInt(hh, 16));
+            const u8a = new Uint8Array(a);
+            const decoder = new TextDecoder();
+            const s = decoder.decode(u8a);
+            document.getElementById("textstr").value = s;
+        }
+        function strtohex(target) {
+            const str = target.value;
+            const encoder = new TextEncoder();
+            const a = encoder.encode(str);
+            const hex = [];
+            for (let i = 0; i < a.length; i++) {
+                hex.push(a[i].toString(16).padStart(2, "0"));
+            }
+            document.getElementById("texthex").value = hex.join(" ");
+        }
+        const textstr_elem = document.getElementById("textstr");
+        const texthex_elem = document.getElementById("texthex");
+        const charcode_elem = document.getElementById("charcode");
+        texthex_elem.oninput = (e) => hextostr(e.target);
+        //textstr_elem.oninput = (e) => strtohex(e.target);
+        strtohex(textstr_elem);
+
+        let textstr_focused = false;
+        function showcharcode() {
+            if (!textstr_focused) {
+                return;
+            }
+            const t = textstr_elem.value;
+            const pos = textstr_elem.selectionStart;
+            let char = t.charAt(pos);
+            let code = t.charCodeAt(pos);
+            if (0xD800 <= code && code <= 0xDBFF) {
+                const code1 = t.charCodeAt(pos + 1);
+                code = (code - 0xD800) * 0x400 + (code1 - 0xDC00) + 0x10000;
+                char = char + t.charAt(pos+1);
+            }
+            if (isNaN(code)) {
+                charcode_elem.innerText = ""
+                return;
+            }
+            charcode_elem.innerText = char + "  U+" + code.toString(16).padStart(4, "0");
+        }
+        textstr_elem.onfocus = () => textstr_focused = true;
+        textstr_elem.onblur = () => textstr_focused = false;
+        // https://stackoverflow.com/questions/19755633/detect-when-cursor-position-inside-input-change-in-jquery/66272226#66272226
+        textstr_elem.onclick = showcharcode;
+        textstr_elem.oncontextmenu = showcharcode;
+        textstr_elem.onkeyup = showcharcode;
+        textstr_elem.onkeydown = showcharcode;
+        textstr_elem.oninput = function (e) {
+            showcharcode();
+            strtohex(e.target);
+        }
+    }
+};
+</script>
+</head>
+<body>
+<h1>Web henkan-kun</h1>
+<h2>int converter</h2>
+<dl>
+    <dt>Dec</dt><dd><input class="bk" id="Dec" value="1234"></dd>
+    <dt>Hex</dt><dd><input class="bk" id="Hex"></dd>
+    <dt>Bin</dt><dd><input class="bk" id="Bin"></dd>
+    <dt>u8</dt><dd><input class="bk" id="u8"></dd>
+    <dt>s8</dt><dd><input class="bk" id="s8"></dd>
+    <dt>u16</dt><dd><input class="bk" id="u16"></dd>
+    <dt>s16</dt><dd><input class="bk" id="s16"></dd>
+    <dt>u32</dt><dd><input class="bk" id="u32"></dd>
+    <dt>s32</dt><dd><input class="bk" id="s32"></dd>
+    <dt>u64</dt><dd><input class="bk" id="u64"></dd>
+    <dt>s64</dt><dd><input class="bk" id="s64"></dd>
+    <dt id="bkerror"></dt>
+</dl>
+<h2>string &lt;-&gt; UTF-8 converter</h2>
+<div class="container">
+    <div>
+        <textarea class="sk" id="textstr" spellcheck="false">Helloこんにちは✨🎈</textarea>
+        <div id="charcode"></div>
+    </div>
+    <div>
+        <textarea class="sk" id="texthex" spellcheck="false"></textarea>
+    </div>
+</div>
+</body>
+</html>
