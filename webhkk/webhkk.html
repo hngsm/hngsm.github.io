@@ -175,15 +175,21 @@ window.onload = function(){
         const textstr_elem = document.getElementById("textstr");
         const texthex_elem = document.getElementById("texthex");
         const charcode_elem = document.getElementById("charcode");
-        function hextostr(target) {
-            const hexstr = target.value;
+        function getu8array(hexstr) {
             const hex = hexstr.match(/[0-9a-fA-F]{2}/g);
             if (!hex) {
-                textstr_elem.value = "";
-                return;
+                return null;
             }
             const a = hex.map((hh) => parseInt(hh, 16));
             const u8a = new Uint8Array(a);
+            return u8a;
+        }
+        function hextostr(target) {
+            const u8a = getu8array(target.value);
+            if (!u8a) {
+                textstr_elem.value = "";
+                return;
+            }
             const decoder = new TextDecoder();
             const s = decoder.decode(u8a);
             textstr_elem.value = s;
@@ -233,6 +239,19 @@ window.onload = function(){
             showcharcode();
             strtohex(e.target);
         }
+        let url;
+        function download(e) {
+            const u8a = getu8array(texthex_elem.value);
+            if (!u8a) {
+                return;
+            }
+            if (url) {
+                URL.revokeObjectURL(url);
+            }
+            url = URL.createObjectURL(new Blob([u8a.buffer], {type: "application/octet-stream"}));
+            e.target.href = url;
+        }
+        document.getElementById("download").onclick = download;
     }
 };
 </script>
@@ -262,6 +281,7 @@ window.onload = function(){
     </div>
     <div>
         <textarea class="sk" id="texthex" spellcheck="false"></textarea>
+        <div><a id="download" download="data.bin">save</a></div>
     </div>
 </div>
 </body>
