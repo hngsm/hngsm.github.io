@@ -107,7 +107,7 @@ window.onload = function(){
         function propagate(v) {
             function signed(v, bit) {
                 const mask = (1n<<bit) - 1n;
-                const msb = v & (1n<<(bit - 1n));
+                const msb = 1n<<(bit - 1n);
                 const sub = 1n<<bit;
                 let t = v & mask;
                 if (t & msb) {
