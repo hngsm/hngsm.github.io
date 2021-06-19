@@ -2,9 +2,31 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <link rel="stylesheet" href="../assets/style.css" type="text/css">
 <title>Web henkan-kun</title>
 <style>
+    html {
+        box-sizing: border-box;
+    }
+    *, *::before, *::after {
+        box-sizing: inherit;
+    }
+    h1 {
+        margin-bottom: 6px;
+    }
+    #panecontainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    #bkpane {
+        width: 19em;
+        margin: 6px;
+    }
+    #skpane {
+        margin: 6px;
+    }
     dl {
         margin-left: auto;
         margin-right: auto;
@@ -14,30 +36,39 @@
         float: left;
     }
     input.bk {
-        text-align: right;
-        font-family: monospace;
-    }
-    #charcode {
-        margin-top: 0.6em;
-        text-align: right;
-        font-family: monospace;
-        height: 3.5em;
-    }
-    input {
         width: 18em;
+        text-align: right;
+        font-family: monospace;
     }
-    .container {
+    #skcontainer {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .textareacontainer {
+        margin: 4px;
     }
     textarea {
-        display: inline-block;
+        display: block;
         margin-left: 0.5em;
         margin-right: 0.5em;
         width: 24em;
         height: 20em;
         font-family: monospace;
+    }
+    #charcodearea {
+        display: flex;
+        flex-direction: column-reverse;
+        text-align: right;
+        margin-top: 0.6em;
+        font-family: monospace;
+        height: 1.1em;
+    }
+    #charcode {
+        text-align: right;
+    }
+    #savearea {
+        text-align: right;
     }
 </style>
 <script>
@@ -258,30 +289,36 @@ window.onload = function(){
 </head>
 <body>
 <h1>Web henkan-kun</h1>
-<h2>int converter</h2>
-<dl>
-    <dt>Dec</dt><dd><input class="bk" id="Dec" value="1234"></dd>
-    <dt>Hex</dt><dd><input class="bk" id="Hex"></dd>
-    <dt>Bin</dt><dd><input class="bk" id="Bin"></dd>
-    <dt>u8</dt><dd><input class="bk" id="u8"></dd>
-    <dt>s8</dt><dd><input class="bk" id="s8"></dd>
-    <dt>u16</dt><dd><input class="bk" id="u16"></dd>
-    <dt>s16</dt><dd><input class="bk" id="s16"></dd>
-    <dt>u32</dt><dd><input class="bk" id="u32"></dd>
-    <dt>s32</dt><dd><input class="bk" id="s32"></dd>
-    <dt>u64</dt><dd><input class="bk" id="u64"></dd>
-    <dt>s64</dt><dd><input class="bk" id="s64"></dd>
-    <dt id="bkerror"></dt>
-</dl>
-<h2>string &lt;-&gt; UTF-8 converter</h2>
-<div class="container">
-    <div>
-        <textarea class="sk" id="textstr" spellcheck="false">Helloこんにちは✨🎈</textarea>
-        <div id="charcode"></div>
+<div id="panecontainer">
+    <div id="bkpane">
+        <h2>int converter</h2>
+        <dl>
+            <dt>Dec</dt><dd><input class="bk" id="Dec" value="1234"></dd>
+            <dt>Hex</dt><dd><input class="bk" id="Hex"></dd>
+            <dt>Bin</dt><dd><input class="bk" id="Bin"></dd>
+            <dt>u8</dt><dd><input class="bk" id="u8"></dd>
+            <dt>s8</dt><dd><input class="bk" id="s8"></dd>
+            <dt>u16</dt><dd><input class="bk" id="u16"></dd>
+            <dt>s16</dt><dd><input class="bk" id="s16"></dd>
+            <dt>u32</dt><dd><input class="bk" id="u32"></dd>
+            <dt>s32</dt><dd><input class="bk" id="s32"></dd>
+            <dt>u64</dt><dd><input class="bk" id="u64"></dd>
+            <dt>s64</dt><dd><input class="bk" id="s64"></dd>
+            <dt id="bkerror"></dt>
+        </dl>
     </div>
-    <div>
-        <textarea class="sk" id="texthex" spellcheck="false"></textarea>
-        <div><a id="download" download="data.bin">save</a></div>
+    <div id="skpane">
+        <h2>string &lt;-&gt; UTF-8 converter</h2>
+        <div id="skcontainer">
+            <div class="textareacontainer">
+                <textarea class="sk" id="textstr" spellcheck="false">Helloこんにちは✨🎈</textarea>
+                <div id="charcodearea"><div id="charcode"></div></div>
+            </div>
+            <div class="textareacontainer">
+                <textarea class="sk" id="texthex" spellcheck="false"></textarea>
+                <div id="savearea"><a id="download" download="data.bin">save</a></div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
