@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" href="../assets/style.css" type="text/css">
+<title>Set operation</title>
+<style>
+    html {
+        box-sizing: border-box;
+    }
+    *, *::before, *::after {
+        box-sizing: inherit;
+    }
+    h1 {
+        margin-bottom: 6px;
+    }
+    #panecontainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .pane {
+        width: 32em;
+        margin: 6px;
+    }
+    .board {
+        width: 10em;
+        margin: 6px;
+    }
+    .input-textarea {
+        width: 31em;
+        height: 33em;
+
+    }
+    .nomarker {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<script>
+window.onload = function(){
+    function getSelectedOp() {
+        if (document.getElementById("op-intersection").checked) {
+            return "intersection";
+        } else if (document.getElementById("op-union").checked) {
+            return "union";
+        } else {
+            return "difference";
+        }
+    }
+    function update() {
+        function getInputAsArray(elem) {
+            let a = elem.value.split("\n");
+            return a;
+        }
+        let input_a = new Set(getInputAsArray(document.getElementById("text-A")));
+        let input_b = new Set(getInputAsArray(document.getElementById("text-B")));
+        let answer = new Set();
+        const op = getSelectedOp();
+        if (op === "intersection") {
+            for (let e of input_a) {
+                if (input_b.has(e)) {
+                    answer.add(e);
+                }
+            }
+        } else if (op === "union") {
+            for (let e of input_a) {
+                answer.add(e);
+            }
+            for (let e of input_b) {
+                answer.add(e);
+            }
+        } else if (op === "difference") {
+            for (let e of input_a) {
+                if (!input_b.has(e)) {
+                    answer.add(e);
+                }
+            }
+        }
+        let arr = Array.from(answer);
+        arr.sort();
+        document.getElementById("text-C").value = arr.join("\n");
+    }
+    const gobutton = document.getElementById("go");
+    gobutton.onclick = update;
+};
+</script>
+</head>
+<body>
+<h1>Set operation</h1>
+<div id="panecontainer">
+    <div class="pane">
+        <h2>A</h2>
+        <textarea class="input-textarea" id="text-A" spellcheck="false"></textarea>
+    </div>
+    <div class="pane">
+        <h2>B</h2>
+        <textarea class="input-textarea" id="text-B" spellcheck="false"></textarea>
+    </div>
+    <div class="board">
+        <h2>Operation</h2>
+        <ul class="nomarker">
+            <li><input type="radio" name="setop" id="op-intersection" value="A∩B"><label for="op-intersection">A∩B</label></li>
+            <li><input type="radio" name="setop" id="op-union" value="A∪B"><label for="op-union">A∪B</label></li>
+            <li><input type="radio" name="setop" id="op-difference" value="A-B"><label for="op-difference">A-B</label></li>
+        </ul>
+        <button id="go">Go</button>
+    </div>
+    <div class="pane">
+        <h2>C</h2>
+        <textarea class="input-textarea" id="text-C" spellcheck="false"></textarea>
+    </div>
+</div>
+</body>
+</html>
