@@ -46,8 +46,10 @@ window.onload = function(){
             return "intersection";
         } else if (document.getElementById("op-union").checked) {
             return "union";
-        } else {
+        } else if (document.getElementById("op-difference").checked) {
             return "difference";
+        } else {
+            return "symdifference";
         }
     }
     function update() {
@@ -78,6 +80,17 @@ window.onload = function(){
                     answer.add(e);
                 }
             }
+        } else if (op === "symdifference") {
+            for (let e of input_a) {
+                if (!input_b.has(e)) {
+                    answer.add(e);
+                }
+            }
+            for (let e of input_b) {
+                if (!input_a.has(e)) {
+                    answer.add(e);
+                }
+            }
         }
         let arr = Array.from(answer);
         arr.sort();
@@ -105,6 +118,7 @@ window.onload = function(){
             <li><input type="radio" name="setop" id="op-intersection" value="A∩B"><label for="op-intersection">A∩B</label></li>
             <li><input type="radio" name="setop" id="op-union" value="A∪B"><label for="op-union">A∪B</label></li>
             <li><input type="radio" name="setop" id="op-difference" value="A-B"><label for="op-difference">A-B</label></li>
+            <li><input type="radio" name="setop" id="op-symdifference" value="A-B"><label for="op-symdifference">A△B<sup><a href="https://en.wikipedia.org/wiki/Symmetric_difference">?</a></sup></label></li>
         </ul>
         <button id="go">Go</button>
     </div>
