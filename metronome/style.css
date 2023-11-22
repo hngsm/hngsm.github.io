@@ -1,0 +1,48 @@
+#metronomeapp {
+    font-weight: bold;
+    font-family: sans-serif;
+}
+#playbutton {
+    width: 100%;
+    height: 60px;
+}
+#tempocontrol {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    display: flex;
+    flex-direction: row;
+}
+#tempolabel {
+    text-align: center;
+    padding-left: 8pt;
+    padding-right: 8pt;
+    width: 30pt;
+}
+#temposlider {
+    width: 100%;
+}
+#mastervolumecontrol {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    display: flex;
+    flex-direction: row;
+}
+#mastervolumelabel {
+    text-align: center;
+    padding-left: 8pt;
+    padding-right: 8pt;
+    width: 30pt;
+}
+#mastervolumeslider {
+    width: 100%;
+}
+#presetselect {
+    width: 80px;
+    height: 40px;
+}
+#patternjson {
+    width: 100%;
+    height: 400px;
+}

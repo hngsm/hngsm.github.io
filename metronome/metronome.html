@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Programmable Metronome</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="metronomeapp">
+        <input id="playbutton" type="button" value="Play/Stop">
+        <div id="tempocontrol">
+            <label>Tempo</label>
+            <label id="tempolabel" contenteditable="true">120</label>
+            <input id="temposlider" type="range" min="20" max="300">
+        </div>
+        <div id="mastervolumecontrol">
+            <label>Volume</label>
+            <label id="mastervolumelabel" contenteditable="true">1.00</label>
+            <input id="mastervolumeslider" type="range" min="0" max="2" step="0.01">
+        </div>
+        <div id="presetloadercontrol">
+            <label>Load preset</label>
+            <select id="presetselect">
+            </select>
+        </div>
+        <div>
+            <textarea id="patternjson">
+
+            </textarea>
+            <input id="patternupdate" type="button" value="load pattern">
+        </div>
+        <div>
+            <p id="message"></p>
+        </div>
+    </div>
+    <script src="patterns.js" type="module"></script>
+    <script src="main.js" type="module"></script>
+</body>
+</html>
